@@ -1,0 +1,27 @@
+
+{
+    "variables": {
+      "git_commit": "",
+      "url": "http://centos2.hti.pl/8-stream/isos/x86_64/CentOS-Stream-8-x86_64-20220513-dvd1.iso",
+      "checksum": "9675a47b19054090dd49431a66d3f7b6fc15a755c4af0b56e6b0c32221870a14",
+      "hostname": "",
+      "user_path": "/Users/kwdigital",
+      "output_folder": "/Parallels/"
+      
+    },
+    "builders": [
+      {
+        "type": "parallels-iso",
+        "iso_url": "{{user `url`}}",
+        "iso_checksum": "{{user `checksum`}}",
+        "parallels_tools_flavor": "mac",
+        "disk_size": "60000",
+        "cpus": 2,
+        "memory": 2048,
+        "guest_os_type": "centos",
+        "vm_name": "{{user `hostname`}}",
+        "output_directory": "{{user `user_path`}}{{user `output_folder`}}{{user `hostname`}}",
+        "shutdown_command": "sudo /sbin/halt -p"
+      }
+    ]
+  }
