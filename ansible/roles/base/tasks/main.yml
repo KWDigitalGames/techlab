@@ -1,0 +1,13 @@
+  - name: Check if SSH key already exists
+    stat: 
+      path: "/root/.ssh/authorized_keys"
+    register: result
+  - name: Deploy SSH public key if it doesnt exist
+    ansible.posix.authorized_key:
+        user: "root"
+        key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+    when: not result.stat.exists
+  - name: Install yum utils
+    dnf:
+      name:
+        - yum-utils
