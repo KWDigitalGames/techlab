@@ -1,0 +1,4 @@
+- name: Management server configuration
+  hosts: mgmt
+  roles:
+    - mgmt

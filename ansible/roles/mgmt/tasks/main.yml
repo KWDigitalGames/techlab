@@ -1,0 +1,28 @@
+- name: Setting up management server
+  hosts: mgmt
+  tasks:
+    - name: Install Java
+      ansible.builtin.dnf:
+        name: java-1.8.0-openjdk-devel
+    - name: Add Jenkins repo
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/jenkins.repo
+        content: |
+          [jenkins]
+          name=Jenkins-stable
+          baseurl=http://pkg.jenkins.io/redhat
+          gpgcheck=1
+    - name: Install Jenkins
+      ansible.builtin.dnf: 
+        name: jenkins
+    - name: Start Jenkins service and make sure it is enabled
+      ansible.builtin.systemd:
+        state: started
+        name: jenkins
+        enabled: yes
+    - name: Open 8080 port for Jenkins
+      firewalld:
+        permanent: yes
+        immediate: yes
+        port: 8080/tcp
+        state: enabled
