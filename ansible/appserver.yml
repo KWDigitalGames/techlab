@@ -1,0 +1,4 @@
+- name: Appserver configuration 
+  hosts: app
+  roles:
+    - app

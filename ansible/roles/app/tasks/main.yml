@@ -1,0 +1,17 @@
+  - name: Set up docker repository
+    shell: |
+      yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    args:
+      warn: no
+  - name: Install the latest version of Docker Engine and containerd
+    dnf:
+      name:
+        - docker-ce
+        - docker-ce-cli
+        - containerd.io
+  - name: Start Docker service
+    ansible.builtin.systemd:
+      state: started
+      name: docker
+      enabled: yes
+    
