@@ -1,0 +1,4 @@
+- name: Simple webapp deployment
+  hosts: app
+  roles:
+    - simple_webapp

@@ -1,0 +1,16 @@
+- name: Install Apache Tomcat 
+  ansible.builtin.dnf:
+    name: httpd
+- name: Open firewall port 80
+  firewalld:
+    permanent: yes
+    immediate: yes
+    port: 80/tcp
+    state: enabled
+- name: Start and Enable Apache HTTP server
+  ansible.builtin.systemd:
+    name: httpd
+    state: started
+    enabled: yes
+- name: Load sample webpage
+  template: src=./files/index.html dest=/var/www/html/index.html
