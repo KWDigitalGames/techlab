@@ -1,0 +1,18 @@
+- name: Create build directory
+  ansible.builtin.file:
+    path: /tmp/docker/staticwebpage
+    state: directory
+    mode: 0755
+- name: Copy dockerfile to builds directory
+  template: src=./files/Dockerfile dest=/tmp/docker/staticwebpage
+- name: Create files directory
+  ansible.builtin.file:
+    path: /tmp/docker/staticwebpage/files
+    state: directory
+    mode: 0755
+- name: Copy index.html to files directory
+  template: src=./files/index.html dest=/tmp/docker/staticwebpage/files
+- name: Build an image
+  ansible.builtin.shell: docker build -t httpd /tmp/docker/staticwebpage
+- name: Run container
+  ansible.builtin.shell: docker run -dit --name http01 -p 8080:80 httpd
