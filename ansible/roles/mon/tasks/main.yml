@@ -1,0 +1,58 @@
+    - name: Open elasticsearch port
+      ansible.builtin.shell: firewall-cmd --permanent --add-port=9200/tcp
+    - name: Open kibana port
+      ansible.builtin.shell: firewall-cmd --permanent --add-port=5601/tcp
+    - name: Add ELK gpgkey
+      ansible.builtin.shell: rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
+    - name: Add Elasticsearch repo
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/elasticsearch.repo
+        content: | 
+          [elasticsearch]
+          name=Elasticsearch repository for 8.x packages
+          baseurl=https://artifacts.elastic.co/packages/8.x/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+    - name: Install Elasticsearch
+      ansible.builtin.dnf: 
+        name: elasticsearch
+        state: present
+    - name: Copy Elasticsearch configuration
+      ansible.builtin.template:
+        src: ./templates/elasticsearch/elasticsearch.yml.j2
+        dest: /etc/elasticsearch/elasticsearch.yml
+    - name: Reload systemd daemon, enable and start elasticsearch service
+      ansible.builtin.systemd:
+        state: started
+        daemon_reload: yes
+        name: elasticsearch
+        enabled: yes
+    - name: Add Kibana repo
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/kibana.repo
+        content: |
+          [kibana-8.x]
+          name=Kibana repository for 8.x packages
+          baseurl=https://artifacts.elastic.co/packages/8.x/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+    - name: Install Kibana
+      ansible.builtin.dnf: 
+        name: kibana
+        state: present
+    - name: Copy Kibana configuration
+      ansible.builtin.template:
+        src: ./templates/kibana/kibana.yml.j2
+        dest: /etc/kibana/kibana.yml
+    - name: Reload systemd daemon, enable and start kibana service
+      ansible.builtin.systemd:
+        state: started
+        daemon_reload: yes
+        name: kibana
+        enabled: yes

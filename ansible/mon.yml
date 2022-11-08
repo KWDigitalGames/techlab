@@ -1,0 +1,8 @@
+- name: ELK server configuration
+  hosts: mon
+  vars: 
+    host_ip: 192.168.0.225
+    elastic_port: 9200
+    kibana_port: 5601
+  roles:
+    - mon
