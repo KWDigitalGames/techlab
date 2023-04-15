@@ -1,7 +1,7 @@
     - name: Open elasticsearch port
-      ansible.builtin.shell: firewall-cmd --permanent --add-port=9200/tcp
+      ansible.builtin.shell: firewall-cmd --permanent --add-port={{ elastic_port }}/tcp
     - name: Open kibana port
-      ansible.builtin.shell: firewall-cmd --permanent --add-port=5601/tcp
+      ansible.builtin.shell: firewall-cmd --permanent --add-port={{ kibana_port }}/tcp
     - name: Add ELK gpgkey
       ansible.builtin.shell: rpm --import https://artifacts.elastic.co/GPG-KEY-elasticsearch
     - name: Add Elasticsearch repo
@@ -56,3 +56,26 @@
         daemon_reload: yes
         name: kibana
         enabled: yes
+    - name: Add Logstash repo key 
+      ansible.builtin.copy:
+        dest: /etc/yum.repos.d/logstash.repo
+        content: | 
+          [logstash-8.x]
+          name=Elastic repository for 8.x packages
+          baseurl=https://artifacts.elastic.co/packages/8.x/yum
+          gpgcheck=1
+          gpgkey=https://artifacts.elastic.co/GPG-KEY-elasticsearch
+          enabled=1
+          autorefresh=1
+          type=rpm-md
+    - name: Install logstash-8.x
+      ansible.builtin.dnf: 
+        name: logstash
+        state: present
+    - name: Start logstash service
+      ansible.builtin.systemd:
+        state: started
+        daemon_reload: yes
+        name: logstash
+        enabled: yes
+
